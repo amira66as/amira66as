@@ -1,0 +1,36 @@
+<!-- create_warehouse_with_substorages.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>ایجاد انبار به همراه زیرانبارها</h2>
+    <form method="post">
+        {% csrf_token %}
+
+        <!-- فرم انبار -->
+        <div class="card p-3 mb-3">
+            <h5 class="card-title">مشخصات انبار</h5>
+            {{ warehouse_form.as_p }}
+        </div>
+
+        <!-- فرم‌ست زیرانبارها -->
+        <div class="card p-3 mb-3">
+            <h5 class="card-title">زیرانبارها</h5>
+
+            <!-- این توکن‌ها جهت مدیریت تعداد فرم‌ها الزامی‌ست -->
+            {{ formset.management_form }}
+
+            {% for subform in formset %}
+                <div class="border p-2 mb-2">
+                    <h6>زیرانبار {{ forloop.counter }}</h6>
+                    {{ subform.as_p }}
+                </div>
+            {% endfor %}
+
+        </div>
+
+        <button type="submit" class="btn btn-success">ذخیره</button>
+    </form>
+</div>
+{% endblock %}

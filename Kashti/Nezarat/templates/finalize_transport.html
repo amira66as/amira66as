@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-5">
+    <div class="card shadow-lg">
+        <div class="card-header bg-success text-white">
+            <h4 class="mb-0">✅ نهایی‌سازی عملیات حمل‌ونقل</h4>
+        </div>
+        <div class="card-body text-center">
+            <p>آیا می‌خواهید این عملیات را نهایی کرده و موجودی قطعات را بروزرسانی کنید؟</p>
+            <p><strong>کشتی:</strong> {{ operation.ship.name }}</p>
+            <p><strong>از:</strong> {{ operation.from_warehouse.name }} → <strong>به:</strong> {{ operation.to_warehouse.name }}</p>
+
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-success">بله، نهایی کن</button>
+                <a href="{% url 'transport_detail' operation.id %}" class="btn btn-secondary ms-3">بازگشت</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

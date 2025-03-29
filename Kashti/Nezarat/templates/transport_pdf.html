@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Tahoma; font-size: 12px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #000; padding: 6px; text-align: center; }
+        th { background-color: #eee; }
+    </style>
+</head>
+<body>
+    <h3 style="text-align: center;">گزارش سفر شماره {{ operation.id }}</h3>
+    <p>کشتی: {{ operation.ship.name }}</p>
+    <p>مبدا: {{ operation.from_warehouse.name }}</p>
+    <p>مقصد: {{ operation.to_warehouse.name }}</p>
+    <p>فاصله: {{ operation.distance_km }} کیلومتر</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>قطعه</th>
+                <th>تعداد</th>
+                <th>زیرانبار کشتی</th>
+                <th>مصرفی</th>
+                <th>استفاده‌شده</th>
+                <th>فرسوده</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in operation.items.all %}
+            <tr>
+                <td>{{ item.part.name }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.ship_subwarehouse.name if item.ship_subwarehouse }}</td>
+                <td>{% if item.is_consumable %}بله{% else %}خیر{% endif %}</td>
+                <td>{% if item.used_in_trip %}بله{% else %}خیر{% endif %}</td>
+                <td>{% if item.is_worn_out %}🔴{% else %}🟢{% endif %}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-5">
+    <h3 class="text-center mb-4">➕ افزودن قطعات به سفر: {{ operation.ship.name }}</h3>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary mt-2">ثبت قطعه</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header bg-dark text-white">
+            قطعات اضافه‌شده تا این لحظه
+        </div>
+        <div class="card-body">
+            {% if items %}
+                <table class="table table-striped text-center">
+                    <thead>
+                        <tr>
+                            <th>قطعه</th>
+                            <th>تعداد</th>
+                            <th>مصرفی؟</th>
+                            <th>درصد استفاده</th>
+                            <th>انبار مبدا</th>
+                            <th>زیرانبار مقصد</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in items %}
+                            <tr>
+                                <td>{{ item.part.name }}</td>
+                                <td>{{ item.quantity }}</td>
+                                <td>{{ item.is_consumable|yesno:"✅,❌" }}</td>
+                                <td>{{ item.usage_percent }}%</td>
+                                <td>{{ item.from_warehouse.name }}</td>
+                                <td>{{ item.to_subwarehouse.name }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="alert alert-info text-center">هنوز هیچ قطعه‌ای اضافه نشده.</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-primary text-white text-center">
+            <h2 class="mb-0"><i class="fas fa-bell"></i> یادآوری‌ها</h2>
+        </div>
+        <div class="card-body bg-light">
+            
+            <div class="text-center mb-4">
+                <a href="{% url 'create_reminder' %}" class="btn btn-success btn-lg">
+                    <i class="fas fa-plus-circle"></i> افزودن یادآوری جدید
+                </a>
+            </div>
+
+            {% if reminders %}
+            <div class="table-responsive">
+                <table class="table table-striped text-center">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>📦 نام قطعه</th>
+                            <th>📅 تاریخ یادآوری</th>
+                            <th>📝 توضیحات</th>
+                            <th>⚙ عملیات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for reminder in reminders %}
+                        <tr>
+                            <td class="fw-bold">{{ reminder.part.name }}</td>
+                            <td class="text-danger fw-bold">{{ reminder.reminder_date|date:"Y-m-d H:i" }}</td>
+                            <td>{{ reminder.note|default:"-" }}</td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a href="{% url 'update_reminder' reminder.id %}" class="btn btn-warning btn-sm">
+                                        <i class="fas fa-edit"></i> ویرایش
+                                    </a>
+                                    <a href="{% url 'delete_reminder' reminder.id %}" class="btn btn-danger btn-sm" onclick="return confirm('آیا از حذف این یادآوری مطمئن هستید؟')">
+                                        <i class="fas fa-trash-alt"></i> حذف
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-info text-center">
+                <h4>⏳ هیچ یادآوری ثبت نشده است.</h4>
+                <p>برای افزودن یادآوری جدید، دکمه بالا را بزنید.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

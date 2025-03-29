@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+{% if user.is_authenticated and user.title == 'C' %}
+<section class="py-5">
+    <div class="container px-5 mb-5">
+        <div class="text-center mb-5">
+            <h1 class="display-5 fw-bolder mb-0">
+                <span class="text-gradient d-inline">📢 اعلان‌ها</span>
+            </h1>
+        </div>
+        <div class="row gx-5 justify-content-center">
+            <div class="col-lg-11 col-xl-9 col-xxl-8">
+                {% for application in applications %}
+                <div class="card overflow-hidden shadow rounded-4 border-0 mb-5 fade-in">
+                    <div class="card-body p-4 d-flex flex-column flex-md-row align-items-center justify-content-between gap-4">
+                        
+                        <!-- اطلاعات کاربر -->
+                        <div class="text-center text-md-start">
+                            <h4 class="fw-bold text-primary mb-2">{{ application.employee.user.username }}</h4>
+                            <p class="text-muted mb-0">
+                                <strong>موقعیت درخواستی:</strong> انتخاب از لیست پایین
+                            </p>
+                        </div>
+
+                        <!-- تصویر کاربر -->
+                        {% if application.employee.profile_picture %}
+                            <img src="{{ application.employee.profile_picture.url }}" alt="تصویر پروفایل" class="rounded-circle shadow" style="width: 120px; height: 120px; object-fit: cover;">
+                        {% else %}
+                            <img src="{% static 'images/default-profile.png' %}" alt="بدون تصویر" class="rounded-circle shadow" style="width: 120px; height: 120px; object-fit: cover;">
+                        {% endif %}
+
+                        <!-- فرم تایید / رد -->
+                        <form method="post" class="d-flex flex-column align-items-center gap-2">
+                            {% csrf_token %}
+                            <input type="hidden" name="application_id" value="{{ application.id }}">
+
+                            <!-- لیست آپشن‌ها مطابق مقدار POSITION_CHOICE -->
+                            <select id="position-{{ application.id }}" name="position" class="form-select" onchange="toggleButton('{{ application.id }}')">
+                                <option value="">انتخاب مقام!</option>
+                                <option value="U">نا مشخص (U)</option>
+                                <option value="OA">اپراتور A (OA)</option>
+                                <option value="OB">اپراتور B (OB)</option>
+                                <option value="OS">اپراتور S (OS)</option>
+                                <option value="C">کاپیتان (C)</option>
+                                <option value="E">کارمند عادی (E)</option>
+                            </select>
+
+                            <div class="d-flex gap-2">
+                                <button type="submit" name="action" value="accept" id="acceptButton-{{ application.id }}" class="btn btn-success btn-sm" disabled>
+                                    ✔ پذیرفتن
+                                </button>
+                                <button type="submit" name="action" value="reject" class="btn btn-danger btn-sm">
+                                    ✖ رد
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- اسکریپت فعال‌سازی دکمه بر اساس انتخاب مقام -->
+<script>
+    function toggleButton(id) {
+        const select = document.getElementById(`position-${id}`);
+        const button = document.getElementById(`acceptButton-${id}`);
+        button.disabled = (select.value === "");
+    }
+</script>
+
+<!-- استایل‌های اختصاصی -->
+<style>
+    .fade-in {
+        animation: fadeIn 0.6s ease-in-out;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(15px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .form-select {
+        width: 150px;
+    }
+    .btn-sm {
+        min-width: 90px;
+    }
+</style>
+{% endif %}
+{% endblock %}

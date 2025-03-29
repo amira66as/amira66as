@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="container my-4">
+
+    <div class="card mb-4 shadow">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">اطلاعات انبار</h4>
+        </div>
+        <div class="card-body row">
+            <div class="col-md-4 text-center">
+                {% if warehouse.image %}
+                    <img src="{{ warehouse.image.url }}" alt="عکس انبار" class="img-fluid rounded mb-3" style="max-height: 250px;">
+                {% else %}
+                    <img src="{% static 'images/no_image_available.png' %}" alt="بدون تصویر" class="img-fluid rounded mb-3" style="max-height: 250px;">
+                {% endif %}
+            </div>
+            <div class="col-md-8">
+                <h5 class="fw-bold">{{ warehouse.name }}</h5>
+                <p class="mb-2">
+                    <strong>توضیحات انبار:</strong>
+                    {{ warehouse.description|default:"—" }}
+                </p>
+                <p class="mb-2">
+                    <strong>کد شرکت:</strong> {{ warehouse.company_code }}
+                </p>
+                <p class="mb-2">
+                    <strong>مختصات جغرافیایی:</strong>
+                    {% if warehouse.latitude and warehouse.longitude %}
+                        عرض جغرافیایی: {{ warehouse.latitude }} / طول جغرافیایی: {{ warehouse.longitude }}
+                    {% else %}
+                        ثبت نشده
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- نمایش زیرانبارها و قطعات هر زیرانبار -->
+    <div class="card shadow">
+        <div class="card-header bg-secondary text-white">
+            <h4 class="mb-0">زیرانبارهای وابسته</h4>
+        </div>
+        <div class="card-body">
+            {% if substorages %}
+                <div class="row">
+                    {% for sub in substorages %}
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100 border-info">
+                                <div class="card-header bg-info text-white">
+                                    <h5 class="card-title mb-0">{{ sub.name }}</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-text mb-2">
+                                        <strong>توضیحات:</strong> {{ sub.description|default:"—" }}
+                                    </p>
+                                    <p class="card-text mb-2">
+                                        <strong>کد مکان:</strong> {{ sub.location_code|default:"—" }}
+                                    </p>
+
+                                    <hr>
+                                    <h6 class="fw-bold mb-2">قطعات موجود در این زیرانبار:</h6>
+                                    {% if storage_parts[sub] %}
+                                        <ul class="list-unstyled mb-0">
+                                            {% for part in storage_parts[sub] %}
+                                                <li>
+                                                    {{ part.name }} 
+                                                    (<strong>{{ part.quantity }}</strong> عدد)
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% else %}
+                                        <p class="text-muted">هیچ قطعه‌ای ثبت نشده است.</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-muted">هیچ زیرانباری برای این انبار ثبت نشده است.</p>
+            {% endif %}
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

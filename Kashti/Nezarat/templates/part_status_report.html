@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-5">
+    <h4 class="text-center mb-4">📊 گزارش سلامت قطعه‌ها</h4>
+    <table class="table table-bordered text-center">
+        <thead class="table-dark">
+            <tr>
+                <th>نام قطعه</th>
+                <th>مقدار</th>
+                <th>تاریخ انقضا</th>
+                <th>وضعیت</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in part_statuses %}
+                <tr>
+                    <td>{{ item.part.name }}</td>
+                    <td>{{ item.part.quantity }}</td>
+                    <td>{{ item.part.expiry_date|date:"Y-m-d" }}</td>
+                    <td>
+                        {% if item.status == "WORN_OUT" %}
+                            <span class="badge bg-danger">🔴 فرسوده</span>
+                        {% elif item.status == "EXPIRED" %}
+                            <span class="badge bg-warning text-dark">⏰ منقضی شده</span>
+                        {% elif item.status == "NEAR_WORN" %}
+                            <span class="badge bg-info text-dark">⚠️ در مسیر فرسودگی</span>
+                        {% else %}
+                            <span class="badge bg-success">✅ سالم</span>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="4">قطعه‌ای یافت نشد.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

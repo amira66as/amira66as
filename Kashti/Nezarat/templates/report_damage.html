@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-5">
+    <div class="card shadow">
+        <div class="card-header bg-warning text-dark">گزارش خرابی قطعه</div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-danger">ثبت گزارش</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

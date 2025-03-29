@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="alert alert-danger text-center">
+        <h4 class="mb-3">حذف انبار</h4>
+        <p>آیا از حذف انبار <strong>{{ warehouse.name }}</strong> مطمئن هستید؟<br>این عمل برگشت‌ناپذیر است.</p>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">بله، حذف کن</button>
+            <a href="{% url 'warehouse_details' warehouse.id %}" class="btn btn-secondary">انصراف</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

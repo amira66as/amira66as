@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-5">
+    <h4>⚓ داشبورد کاپیتان</h4>
+    <p>کشتی: {{ ship.name }}</p>
+    <h5>زیرانبارها:</h5>
+    <ul>
+        {% for sub in subwarehouses %}
+            <li>{{ sub.name }}</li>
+        {% endfor %}
+    </ul>
+    <h5>قطعات در کشتی:</h5>
+    <ul>
+        {% for part in parts %}
+            <li>{{ part.part.name }} (تعداد: {{ part.quantity }})</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

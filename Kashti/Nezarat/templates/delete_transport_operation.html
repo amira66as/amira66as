@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-5">
+    <div class="alert alert-danger text-center p-5 shadow">
+        <h4>⚠️ آیا مطمئن هستید که می‌خواهید عملیات زیر را حذف کنید؟</h4>
+        <p class="mt-3">کشتی: <strong>{{ operation.ship.name }}</strong><br> از <strong>{{ operation.from_warehouse.name }}</strong> به <strong>{{ operation.to_warehouse.name }}</strong></p>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">بله، حذف شود</button>
+            <a href="{% url 'transport_detail' operation.id %}" class="btn btn-secondary ms-3">انصراف</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

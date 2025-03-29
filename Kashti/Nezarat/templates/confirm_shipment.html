@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+<div class="container mx-auto py-16 text-center">
+    <div class="max-w-xl mx-auto bg-white shadow-lg rounded-lg p-8">
+        <div class="text-green-600 text-5xl mb-4">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <h2 class="text-2xl font-bold text-gray-800 mb-4">محموله با موفقیت ثبت شد!</h2>
+        <p class="text-gray-600 mb-6">شما می‌توانید وضعیت این محموله را در بخش نظارت بر محموله‌ها دنبال کنید.</p>
+        
+        <div class="flex flex-col sm:flex-row justify-center gap-4">
+            <a href="{% url 'monitor_shipments' %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded">
+                📦 مشاهده محموله‌ها
+            </a>
+            <a href="{% url 'create_shipment' %}" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded">
+                ➕ ثبت محموله جدید
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

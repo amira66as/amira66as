@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>📦 لیست انبارها</h2>
+        <a href="{% url 'create_warehouse' %}" class="btn btn-primary">ایجاد انبار جدید</a>
+    </div>
+
+    {% for warehouse in warehouses %}
+        <a href="{% url 'warehouse_details' warehouse.id %}" class="text-decoration-none text-dark">
+            <div class="card mb-2 shadow-sm hover-shadow" style="transition: 0.3s;">
+                <div class="card-body">
+                    <h5 class="mb-1">{{ warehouse.name }} | کد: {{ warehouse.company_code }}</h5>
+                    <p class="text-muted mb-0">توضیحات: {{ warehouse.description|default:"-" }}</p>
+                </div>
+            </div>
+        </a>
+    {% empty %}
+        <div class="alert alert-warning">هیچ انباری برای شرکت شما ثبت نشده است.</div>
+    {% endfor %}
+</div>
+
+<style>
+    .hover-shadow:hover {
+        transform: scale(1.01);
+        box-shadow: 0 0 10px rgba(0,0,0,0.15);
+    }
+</style>
+{% endblock %}

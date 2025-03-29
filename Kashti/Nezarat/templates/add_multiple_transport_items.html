@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-5">
+    <h3 class="text-center mb-4">➕ افزودن چند قطعه به عملیات: {{ operation.ship.name }}</h3>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ formset.management_form }}
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>قطعه</th><th>تعداد</th><th>انبار مبدا</th><th>زیرانبار مقصد</th><th>مصرفی؟</th><th>درصد استفاده</th><th>حذف</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for form in formset %}
+                    <tr>
+                        {% for field in form.visible_fields %}
+                            <td>{{ field }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <button type="submit" class="btn btn-primary">ثبت قطعات</button>
+    </form>
+</div>
+{% endblock %}

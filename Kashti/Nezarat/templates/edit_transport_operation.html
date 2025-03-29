@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-5">
+    <div class="card shadow">
+        <div class="card-header bg-warning text-white">
+            <h4 class="mb-0">✏️ ویرایش عملیات حمل‌ونقل</h4>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-success mt-3">ذخیره تغییرات</button>
+                <a href="{% url 'transport_detail' operation.id %}" class="btn btn-secondary mt-3">بازگشت</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

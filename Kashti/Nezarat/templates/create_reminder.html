@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">📝 ایجاد یادآوری جدید</h4>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                {{ form.reminder_type.label_tag }} {{ form.reminder_type }}
+                
+                <div id="type-fields" class="mt-3">
+                    {{ form.related_ship }}
+                    {{ form.related_part }}
+                    {{ form.related_warehouse }}
+                    {{ form.related_subwarehouse }}
+                    {{ form.related_travel }}
+                </div>
+
+                {{ form.reminder_date.label_tag }} {{ form.reminder_date }}
+                {{ form.note.label_tag }} {{ form.note }}
+
+                <button type="submit" class="btn btn-success mt-3">ثبت یادآوری</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    const typeSelect = document.getElementById("id_reminder_type");
+
+    function updateFields() {
+        const type = typeSelect.value;
+        const fields = {
+            ship: "id_related_ship",
+            part: "id_related_part",
+            warehouse: "id_related_warehouse",
+            subwarehouse: "id_related_subwarehouse",
+            travel: "id_related_travel",
+        };
+
+        for (const [key, id] of Object.entries(fields)) {
+            const field = document.getElementById(id).parentElement;
+            field.style.display = (type === key) ? 'block' : 'none';
+        }
+    }
+
+    typeSelect.addEventListener('change', updateFields);
+    window.onload = updateFields;
+</script>
+{% endblock %}

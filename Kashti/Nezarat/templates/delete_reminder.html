@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-5">
+  <h2>حذف یادآوری</h2>
+  <p>آیا از حذف یادآوری مربوط به {{ reminder.part.name }} در تاریخ {{ reminder.reminder_date|date:"Y-m-d H:i" }} مطمئن هستید؟</p>
+  <form method="post">
+     {% csrf_token %}
+     <button type="submit" class="btn btn-danger">حذف</button>
+     <a href="{% url 'reminder_list' %}" class="btn btn-secondary">انصراف</a>
+  </form>
+</div>
+{% endblock %}

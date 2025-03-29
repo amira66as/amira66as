@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-5">
+    <h4 class="text-center">📦 نمای گرافیکی زیرانبارهای کشتی: {{ ship.name }}</h4>
+
+    <div class="row row-cols-3 row-cols-md-5 g-3">
+        {% for sub in subwarehouses %}
+        <div class="col">
+            <div class="card shadow-sm text-center 
+                {% if sub.parts.count == 0 %}
+                    border-secondary
+                {% elif sub.parts.filter(is_worn_out=True).exists %}
+                    border-danger
+                {% else %}
+                    border-success
+                {% endif %}
+            ">
+                <div class="card-body p-2">
+                    <h6 class="card-title mb-1">{{ sub.name }}</h6>
+                    <span class="small text-muted">{{ sub.location_code }}</span>
+                    <p class="small mb-0">
+                        {% if sub.parts.exists %}
+                            {{ sub.parts.count }} قطعه
+                        {% else %}
+                            خالی
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

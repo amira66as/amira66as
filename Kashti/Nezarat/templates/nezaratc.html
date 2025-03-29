@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+{% if user.is_authenticated and user.position == 'C' %}
+
+<div class="container">
+    <h1 class="text-center">لیست کشتی‌ها</h1>
+    <table class="table table-striped mt-3">
+        <thead>
+            <tr>
+                <th>نام کشتی</th>
+                <th>توضیحات</th>
+            </tr>
+        </thead>
+        <tbody>
+    
+    
+            {% for ship in ships %}
+                <tr>
+                    {% if ship.company_code == company.company_code %}
+                    <td>{{ ship.name }}</td>
+                    <td>{{ ship.description }}</td>
+                    {% endif %}        
+                    <td>
+                        {# Uncomment the following line to add a link to show the ship parts #}
+                        {# <a href="{% url 'list-ship-parts' ship.id %}" class="btn btn-info">نمایش قطعات</a> #}
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="3" class="text-center">کشتی‌ای ثبت نشده است.</td>
+                </tr>
+            {% endfor %}
+    
+        </tbody>
+    </table>
+</div>
+
+
+<div class="container">
+    <h1 class="text-center">افزودن قطعه به کشتی</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        
+        <button type="submit" name="add_ship_part" class="btn btn-primary">افزودن قطعه به کشتی</button>
+
+    </form>
+</div>
+
+<h2 class="text-center">وضعیت عمر مفید قطعات</h2>
+<p class="text-center">{{ message }}</p>
+
+
+<h1 class="text-center">انبار سوار بر کشتی ها</h1>
+ 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لیست قطعات</title>
+    <style>
+        .nav-bar {
+            background-color: #f1f1f1;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        .nav-bar button {
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+
+<div class="nav-bar">
+    <button onclick="filterNames('all')">نمایش همه</button>
+    <button onclick="filterNames('1')">نمایش انبار ۱</button>
+    <button onclick="filterNames('2')">نمایش انبار ۲</button>
+    <button onclick="filterNames('3')">نمایش انبار ۳</button>
+    <button onclick="filterNames('4')">نمایش انبار ۴</button>
+    <button onclick="filterNames('5')">نمایش انبار ۵</button>
+</div>
+
+<section>
+    <table id="ship-table">
+        <thead>
+            <tr>
+                <th>نام کشتی</th>
+                <th>نام قطعه</th>
+                <th>مقدار</th>
+                <th>تاریخ انقضا</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+            
+            {% for shippart in shipparts %}
+            {% if shippart.part.company_code == company.company_code %}
+            <tr data-warehouse="{{ shippart.part.warehouse }}">
+                <td>{{ shippart.ship.name }}</td>
+                <td>{{ shippart.part.name }}</td>
+                <td>{{ shippart.quantity }}</td>
+                <td>{{ shippart.part.expiry_date }}</td>
+                
+            
+            {% endif %}
+            {% endfor %}
+            
+        </tbody>
+    </table>
+</section>
+
+<script>
+    function filterNames(warehouse) {
+        const table = document.getElementById('ship-table');
+        const rows = table.getElementsByTagName('tr');
+        
+        for (let i = 1; i < rows.length; i++) { // از 1 شروع می‌کنیم چون سطر اول سرستون‌ها هستند
+            const rowWarehouse = rows[i].getAttribute('data-warehouse');
+            if (warehouse === 'all') {
+                rows[i].style.display = '';
+            } else {
+                if (rowWarehouse === warehouse) {
+                    rows[i].style.display = '';
+                } else {
+                    rows[i].style.display = 'none';
+                }
+            }
+        }
+    }
+</script>
+
+
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-5">
+    <h2 class="text-center mb-4">🚚 جزئیات عملیات حمل‌ونقل</h2>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <p><strong>کشتی:</strong> {{ operation.ship.name }}</p>
+            <p><strong>مبدا:</strong> {{ operation.from_warehouse.name }}</p>
+            <p><strong>مقصد:</strong> {{ operation.to_warehouse.name }}</p>
+            <p><strong>مسافت:</strong> {{ operation.distance_km }} کیلومتر</p>
+            <p><strong>مدت سفر:</strong> {{ operation.estimated_duration_hr }} ساعت</p>
+            <p><strong>وضعیت:</strong> {{ operation.get_status_display }}</p>
+        </div>
+    </div>
+
+    {% if expired_items %}
+        <div class="alert alert-danger text-center">
+            ⚠️ برخی از قطعات در طول سفر منقضی می‌شوند!
+        </div>
+    {% endif %}
+
+    <div class="card">
+        <div class="card-header bg-secondary text-white">لیست قطعات</div>
+        <div class="card-body">
+            <table class="table table-hover text-center">
+                <thead>
+                    <tr>
+                        <th>نام قطعه</th>
+                        <th>تعداد</th>
+                        <th>مصرفی؟</th>
+                        <th>درصد استفاده</th>
+                        <th>انبار مبدا</th>
+                        <th>زیرانبار مقصد</th>
+                        <th>منقضی می‌شود؟</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                        <tr>
+                            <td>{{ item.part.name }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>{{ item.is_consumable|yesno:"✅,❌" }}</td>
+                            <td>{{ item.usage_percent }}%</td>
+                            <td>{{ item.from_warehouse.name }}</td>
+                            <td>{{ item.to_subwarehouse.name }}</td>
+                            <td>
+                                {% if item.will_expire_during %}⚠️ بله{% else %}🟢 خیر{% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div id="map" style="height: 400px;" class="my-4"></div>
+<table class="table table-striped text-center">
+    <thead>
+        <tr>
+            <th>قطعه</th>
+            <th>تعداد</th>
+            <th>زیرانبار کشتی</th>
+            <th>در سفر استفاده می‌شود؟</th>
+            <th>وضعیت</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in items %}
+            <tr>
+                <td>{{ item.part.name }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.ship_subwarehouse.name if item.ship_subwarehouse }}</td>
+                <td>{% if item.used_in_trip %} ✅ بله {% else %} ❌ فقط جابه‌جایی {% endif %}</td>
+                <td>
+                    {% if item.is_worn_out %}
+                        🔴 فرسوده شده
+                    {% else %}
+                        🟢 سالم
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script>
+function initMap() {
+    const from = { lat: {{ operation.from_warehouse.latitude }}, lng: {{ operation.from_warehouse.longitude }} };
+    const to = { lat: {{ operation.to_warehouse.latitude }}, lng: {{ operation.to_warehouse.longitude }} };
+
+    const map = new google.maps.Map(document.getElementById("map"), {
+        center: from,
+        zoom: 6,
+    });
+
+    new google.maps.Marker({ position: from, map, title: "انبار مبدا" });
+    new google.maps.Marker({ position: to, map, title: "انبار مقصد" });
+
+    const route = new google.maps.Polyline({
+        path: [from, to],
+        geodesic: true,
+        strokeColor: "#007bff",
+        strokeOpacity: 1.0,
+        strokeWeight: 3,
+    });
+
+    route.setMap(map);
+}
+</script>
+<script async
+    src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap">
+</script>
+
+<div class="alert alert-info text-center">
+    <form method="post">
+        {% csrf_token %}
+        <h5>آیا این عملیات را تأیید می‌کنید؟</h5>
+        <button class="btn btn-success">تأیید عملیات</button>
+    </form>
+</div>
+
+
+{% endblock %}

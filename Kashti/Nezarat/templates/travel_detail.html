@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-gradient-primary text-white text-center py-4">
+            <h2 class="mb-0">🚢 جزئیات سفر</h2>
+        </div>
+        <div class="card-body">
+            <p class="lead my-3"><i class="fas fa-ship"></i> کشتی: <strong>{{ travel.ship.name }}</strong></p>
+            <p class="lead my-3"><i class="fas fa-warehouse"></i> انبار مبدا: <strong>{{ travel.from_warehouse.name }}</strong></p>
+            <p class="lead my-3"><i class="fas fa-warehouse"></i> انبار مقصد: <strong>{{ travel.to_warehouse.name }}</strong></p>
+            <p class="lead my-3"><i class="fas fa-calendar-alt"></i> تاریخ ایجاد: <strong>{{ travel.created_at|date:"Y-m-d H:i:s" }}</strong></p>
+
+            <h3 class="mt-5">📦 قطعات</h3>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped table-hover">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">نام قطعه</th>
+                            <th scope="col">تعداد</th>
+                            <th scope="col">عملیات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for part in parts %}
+                        <tr>
+                            <td>{{ part.part.name }}</td>
+                            <td>{{ part.quantity }}</td>
+                            <td>{{ part.get_action_display }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="d-flex justify-content-between mt-4">
+                <a href="{% url 'add_part_to_warehouse' %}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-plus"></i> اضافه کردن قطعه
+                </a>
+                <a href="{% url 'warehouse_list' %}" class="btn btn-secondary btn-lg">
+                    <i class="fas fa-arrow-left"></i> بازگشت به لیست انبارها
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- انیمیشن‌های CSS -->
+<style>
+    .card-header {
+        animation: fadeInDown 1s ease-in-out;
+    }
+
+    .card-body {
+        animation: fadeInUp 1s ease-in-out;
+    }
+
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+{% endblock %}

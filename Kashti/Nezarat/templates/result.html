@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="mb-4">نتیجه سفر</h2>
+    <p>{{ message }}</p>
+    <p>کشتی: {{ ship.name }}</p>
+    <p>مقصد اصلی: {{ main_destination.name }}</p>
+    <p>زمان سفر به مقصد اصلی: {{ travel_time_main }} ساعت</p>
+
+    {% if additional_destinations %}
+        <h3>مقاصد اضافی:</h3>
+        <ul>
+            {% for dest in additional_destinations %}
+                <li>{{ dest.name }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    <a href="{% url 'travel' %}" class="btn btn-secondary">بازگشت</a>
+</div>
+{% endblock %}

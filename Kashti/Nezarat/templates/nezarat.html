@@ -1,0 +1,436 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-4">
+
+  <!-- سربرگ صفحه -->
+  <div class="page-header text-white mb-4 p-4 shadow" 
+       style="background: linear-gradient(135deg, #6a11cb, #2575fc); border-radius: .5rem;">
+    <h2 class="fw-bold">👁‍🗨 پنل نظارت جامع</h2>
+    {% if expired_message %}
+      <div class="alert alert-warning mt-3 shadow-sm">
+        {{ expired_message }}
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- کارت‌های آماری -->
+  <div class="row g-2 mb-3">
+    <div class="col-md-2">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body text-center">
+          <h6 class="text-muted">کشتی‌ها</h6>
+          <div class="display-6 text-primary">{{ stats.ships }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body text-center">
+          <h6 class="text-muted">انبارها</h6>
+          <div class="display-6 text-success">{{ stats.warehouses }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body text-center">
+          <h6 class="text-muted">قطعات</h6>
+          <div class="display-6 text-warning">{{ stats.parts }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body text-center">
+          <h6 class="text-muted">سفرها</h6>
+          <div class="display-6 text-info">{{ stats.transports }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body text-center">
+          <h6 class="text-muted">کارمندان</h6>
+          <div class="display-6 text-danger">{{ stats.employees }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- تب‌ها (Nav Pills) -->
+  <ul class="nav nav-pills mb-3" id="nezaratTabs" role="tablist" style="border-bottom: 1px solid #000000;">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="employees-tab" data-bs-toggle="tab" data-bs-target="#employees-panel" type="button" role="tab" aria-controls="employees-panel" aria-selected="true">
+        کارمندان
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="ships-tab" data-bs-toggle="tab" data-bs-target="#ships-panel" type="button" role="tab" aria-controls="ships-panel" aria-selected="false">
+        کشتی‌ها
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="ship-parts-tab" data-bs-toggle="tab" data-bs-target="#ship-parts-panel" type="button" role="tab" aria-controls="ship-parts-panel" aria-selected="false">
+        قطعات روی کشتی
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="parts-tab" data-bs-toggle="tab" data-bs-target="#parts-panel" type="button" role="tab" aria-controls="parts-panel" aria-selected="false">
+        قطعات
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="warehouses-tab" data-bs-toggle="tab" data-bs-target="#warehouses-panel" type="button" role="tab" aria-controls="warehouses-panel" aria-selected="false">
+        انبارها
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="subwarehouses-tab" data-bs-toggle="tab" data-bs-target="#subwarehouses-panel" type="button" role="tab" aria-controls="subwarehouses-panel" aria-selected="false">
+        زیرانبارهای انبار
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="ship-subwarehouses-tab" data-bs-toggle="tab" data-bs-target="#ship-subwarehouses-panel" type="button" role="tab" aria-controls="ship-subwarehouses-panel" aria-selected="false">
+        زیرانبارهای کشتی
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="transport-tab" data-bs-toggle="tab" data-bs-target="#transport-panel" type="button" role="tab" aria-controls="transport-panel" aria-selected="false">
+        سفرها
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="reminders-tab" data-bs-toggle="tab" data-bs-target="#reminders-panel" type="button" role="tab" aria-controls="reminders-panel" aria-selected="false">
+        یادآوری‌ها
+      </button>
+    </li>
+  </ul>
+
+  <div class="tab-content" id="nezaratTabsContent">
+
+    <!-- 1) کارمندان -->
+    <div class="tab-pane fade show active" id="employees-panel" role="tabpanel" aria-labelledby="employees-tab">
+      <h5 class="mb-2">کارمندان شرکت</h5>
+      <input id="employeeSearch" type="text" class="form-control form-control-sm mb-2" placeholder="جستجو در کارمندان...">
+      <div class="table-responsive">
+        <table class="table table-bordered table-striped align-middle" id="employeeTable">
+          <thead class="table-secondary">
+            <tr>
+              <th>#</th>
+              <th>نام کاربری</th>
+              <th>جایگاه</th>
+              <th>عملیات</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for me in employees %}
+              <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ me.employee.user.username }}</td>
+                <td>{{ me.position }}</td>
+                <td>
+                  <button class="btn btn-sm btn-primary disabled">ویرایش</button>
+                  <button class="btn btn-sm btn-danger disabled">حذف</button>
+                </td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="4" class="text-center text-muted">هیچ کارمندی ثبت نشده</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 2) کشتی‌ها -->
+    <div class="tab-pane fade" id="ships-panel" role="tabpanel" aria-labelledby="ships-tab">
+      <h5 class="mb-2">کشتی‌های شرکت</h5>
+      <input id="shipSearch" type="text" class="form-control form-control-sm mb-2" placeholder="جستجو در کشتی‌ها...">
+      <div class="table-responsive">
+        <table class="table table-bordered table-striped align-middle" id="shipTable">
+          <thead class="table-secondary">
+            <tr>
+              <th>#</th>
+              <th>نام کشتی</th>
+              <th>توضیحات</th>
+              <th>عملیات</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for ship in ships %}
+              <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ ship.name }}</td>
+                <td>{{ ship.description|default:"—" }}</td>
+                <td>
+                  <!-- دکمه ویرایش مودالی -->
+                  <button class="btn btn-sm btn-primary" onclick="openShipModal({{ ship.id }})">ویرایش مودال</button>
+                  <!-- دکمه حذف Ajax -->
+                  <button class="btn btn-sm btn-danger" onclick="deleteShipAjax({{ ship.id }}, event)">حذف Ajax</button>
+                </td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="4" class="text-center text-muted">هیچ کشتی ثبت نشده</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 3) قطعات روی کشتی (ShipPart) -->
+    <div class="tab-pane fade" id="ship-parts-panel" role="tabpanel" aria-labelledby="ship-parts-tab">
+      <h5 class="mb-2">قطعات نصب‌شده روی کشتی</h5>
+      <p class="text-muted">در صورت نیاز، الگوی بالا را تکرار کنید (جستجو + جدول).</p>
+    </div>
+
+    <!-- 4) قطعات (Part) -->
+    <div class="tab-pane fade" id="parts-panel" role="tabpanel" aria-labelledby="parts-tab">
+      <h5 class="mb-2">قطعات شرکت</h5>
+      <input id="partSearch" type="text" class="form-control form-control-sm mb-2" placeholder="جستجو در قطعات...">
+      <div class="table-responsive">
+        <table class="table table-bordered table-striped align-middle" id="partTable">
+          <thead class="table-secondary">
+            <tr>
+              <th>#</th>
+              <th>نام قطعه</th>
+              <th>تعداد</th>
+              <th>کد شرکت</th>
+              <th>انقضا</th>
+              <th>عملیات</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for p in parts %}
+              <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ p.name }}</td>
+                <td>{{ p.quantity }}</td>
+                <td>{{ p.company_code }}</td>
+                <td>{{ p.expiry_date|default:"—" }}</td>
+                <td>
+                  <!-- اگر ویو آپدیت داری: -->
+                  <a href="{% url 'update_part' p.id %}" class="btn btn-sm btn-primary">ویرایش</a>
+                </td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="6" class="text-center text-muted">هیچ قطعه‌ای ثبت نشده</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 5) انبارها (Warehouse) -->
+    <div class="tab-pane fade" id="warehouses-panel" role="tabpanel" aria-labelledby="warehouses-tab">
+      <h5 class="mb-2">انبارهای شرکت</h5>
+      <!-- شبیه الگوهای بالا: جستجو + جدول -->
+    </div>
+
+    <!-- 6) زیرانبارهای انبار (WarehouseSubStorage) -->
+    <div class="tab-pane fade" id="subwarehouses-panel" role="tabpanel" aria-labelledby="subwarehouses-tab">
+      <h5 class="mb-2">زیرانبارهای انبار</h5>
+      <!-- جستجو + جدول -->
+    </div>
+
+    <!-- 7) زیرانبارهای کشتی (ShipSubWarehouse) -->
+    <div class="tab-pane fade" id="ship-subwarehouses-panel" role="tabpanel" aria-labelledby="ship-subwarehouses-tab">
+      <h5 class="mb-2">زیرانبارهای کشتی</h5>
+      <!-- جستجو + جدول -->
+    </div>
+
+    <!-- 8) سفرها (TransportOperation) -->
+    <div class="tab-pane fade" id="transport-panel" role="tabpanel" aria-labelledby="transport-tab">
+      <h5 class="mb-2">سفرهای شرکت</h5>
+      <!-- جستجو + جدول -->
+    </div>
+
+    <!-- 9) یادآوری‌ها (Reminder) -->
+    <div class="tab-pane fade" id="reminders-panel" role="tabpanel" aria-labelledby="reminders-tab">
+      <h5 class="mb-2">یادآوری‌های شرکت</h5>
+      <!-- جستجو + جدول -->
+    </div>
+
+  </div> <!-- /tab-content -->
+</div> <!-- /container -->
+
+<!-- Modal ویرایش کشتی (Ajax) -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content shadow">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="editModalLabel">ویرایش کشتی</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="بستن"></button>
+      </div>
+      <div class="modal-body" id="editModalBody">
+        <!-- فرم با Ajax لود می‌شود -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+
+  // نمودار (Chart.js)
+  const chartCanvas = document.getElementById('statsChart');
+  if(chartCanvas) {
+    const data = {
+      labels: ['کشتی', 'انبار', 'قطعه', 'سفر', 'کارمند'],
+      datasets: [{
+        label: 'تعداد',
+        data: [
+          {{ stats.ships }},
+          {{ stats.warehouses }},
+          {{ stats.parts }},
+          {{ stats.transports }},
+          {{ stats.employees }}
+        ],
+        backgroundColor: [
+          'rgba(54, 162, 235, 0.8)',
+          'rgba(255, 206, 86, 0.8)',
+          'rgba(75, 192, 192, 0.8)',
+          'rgba(153, 102, 255, 0.8)',
+          'rgba(255, 99, 132, 0.8)'
+        ]
+      }]
+    };
+    const config = { type: 'pie', data: data };
+    new Chart(chartCanvas, config);
+  }
+
+  // جستجو در جدول کارمندان
+  const empSearch = document.getElementById('employeeSearch');
+  const empTable = document.getElementById('employeeTable');
+  if (empSearch && empTable) {
+    empSearch.addEventListener('keyup', () => {
+      const query = empSearch.value.toLowerCase();
+      const rows = empTable.getElementsByTagName('tr');
+      for (let i = 1; i < rows.length; i++) {
+        const rowText = rows[i].innerText.toLowerCase();
+        rows[i].style.display = rowText.indexOf(query) > -1 ? '' : 'none';
+      }
+    });
+  }
+
+  // جستجو در جدول کشتی‌ها
+  const shipSearch = document.getElementById('shipSearch');
+  const shipTable = document.getElementById('shipTable');
+  if (shipSearch && shipTable) {
+    shipSearch.addEventListener('keyup', () => {
+      const query = shipSearch.value.toLowerCase();
+      const rows = shipTable.getElementsByTagName('tr');
+      for (let i = 1; i < rows.length; i++) {
+        const rowText = rows[i].innerText.toLowerCase();
+        rows[i].style.display = rowText.indexOf(query) > -1 ? '' : 'none';
+      }
+    });
+  }
+
+  // جستجو در جدول قطعات
+  const partSearch = document.getElementById('partSearch');
+  const partTable = document.getElementById('partTable');
+  if (partSearch && partTable) {
+    partSearch.addEventListener('keyup', () => {
+      const query = partSearch.value.toLowerCase();
+      const rows = partTable.getElementsByTagName('tr');
+      for (let i = 1; i < rows.length; i++) {
+        const rowText = rows[i].innerText.toLowerCase();
+        rows[i].style.display = (rowText.indexOf(query) > -1) ? '' : 'none';
+      }
+    });
+  }
+
+});
+</script>
+
+<!-- اسکریپت ویرایش مودالی کشتی -->
+<script>
+function openShipModal(shipId) {
+  const url = `/ships/edit-modal/${shipId}/`;
+  fetch(url)
+    .then(resp => resp.text())
+    .then(html => {
+      const modalBody = document.getElementById('editModalBody');
+      modalBody.innerHTML = html;
+      const myModal = new bootstrap.Modal(document.getElementById('editModal'));
+      myModal.show();
+      
+      // هندل ثبت فرم
+      const form = modalBody.querySelector('#shipEditForm');
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(form);
+        fetch(url, {
+          method: 'POST',
+          body: formData
+        })
+        .then(r => r.json().catch(() => r.text()))
+        .then(data => {
+          if(data.status === 'ok') {
+            alert(data.message);
+            myModal.hide();
+            window.location.reload();
+          } else {
+            // اگر ارور فرم داشت
+            modalBody.innerHTML = data;
+          }
+        })
+        .catch(err => console.error(err));
+      });
+    })
+    .catch(err => console.error(err));
+}
+
+function deleteShipAjax(shipId, event) {
+  if(!confirm("آیا از حذف این کشتی مطمئن هستید؟")) return;
+  fetch(`/ships/delete-ajax/${shipId}/`, {
+    method: 'POST',
+    headers: {'X-CSRFToken': '{{ csrf_token }}'}
+  })
+  .then(resp => resp.json())
+  .then(data => {
+    if(data.status === 'ok') {
+      alert("کشتی با موفقیت حذف شد.");
+      const row = event.target.closest('tr');
+      row.remove();
+    } else {
+      alert("خطا در حذف کشتی");
+    }
+  })
+  .catch(err => console.error(err));
+}
+</script>
+
+<style>
+/* طراحی تب‌ها با Nav Pills */
+.nav-pills .nav-link.active {
+  background-color: #6a11cb !important; /* بنفش */
+  color: #fff !important;
+}
+.nav-pills .nav-link {
+  color: #555;
+  margin-right: .25rem;
+}
+
+/* استایل جدول با سرستون خاکستری روشن */
+.table-secondary th {
+  background-color: #e2e3e5 !important;
+  color: #333 !important;
+}
+
+/* کارت‌ها */
+.card {
+  border-radius: .5rem;
+}
+
+/* مودال */
+.modal-content {
+  border-radius: .75rem;
+}
+</style>
+{% endblock %}

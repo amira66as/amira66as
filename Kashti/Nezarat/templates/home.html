@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="text-center">
+        <h1 class="display-4 fw-bold text-primary">🚢 داشبورد مدیریت کشتی‌ها و انبارها</h1>
+        <p class="lead text-muted">مدیریت کشتی‌ها، انبارها و قطعات در یک محیط کاربری آسان و سریع</p>
+    </div>
+
+    <!-- فرم جستجوی کشتی -->
+    <div class="text-center my-4">
+        <form method="POST" class="d-flex justify-content-center">
+            {% csrf_token %}
+            <div class="input-group w-50">
+                <input type="text" id="search_query" name="search_query" class="form-control" placeholder="🔍 نام کشتی را وارد کنید">
+                <button type="submit" class="btn btn-primary">جستجو</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- نمایش نتایج جستجو -->
+    {% if searched_ship %}
+    <div class="card shadow-lg mb-5">
+        <div class="row g-0">
+            {% if searched_ship.image %}
+                <div class="col-md-4">
+                    <img src="{{ searched_ship.image.url }}" class="card-img rounded-start" alt="{{ searched_ship.name }}">
+                </div>
+            {% endif %}
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h3 class="card-title text-primary">{{ searched_ship.name }}</h3>
+                    <p class="card-text">{{ searched_ship.description }}</p>
+                    <p class="text-muted">کد شرکت: {{ searched_ship.company_code }}</p>
+                    <a href="{% url 'export_searched_ship_to_excel' %}?ship_id={{ searched_ship.id }}" class="btn btn-success">📂 دانلود اکسل</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-info text-center">
+        برای مشاهده اطلاعات یک کشتی، نام آن را جستجو کنید.
+    </div>
+    {% endif %}
+
+    <!-- لیست کشتی‌ها -->
+    <h2 class="mt-5 text-center">🚢 کشتی‌های شما</h2>
+    {% if ships.exists %}
+    <div class="row">
+        {% for ship in ships %}
+            {% if ship.company_code == company.company_code %}
+            <div class="col-md-4">
+                <div class="card mb-4 shadow-lg border-0 hover-shadow">
+                    {% if ship.image %}
+                        <img src="{{ ship.image.url }}" class="card-img-top" alt="{{ ship.name }}">
+                    {% endif %}
+                    <div class="card-body text-center">
+                        <h5 class="card-title text-primary">{{ ship.name }}</h5>
+                        <p class="text-muted">{{ ship.description|truncatechars:100 }}</p>
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'update_ship' ship.id %}" class="btn btn-warning btn-sm">✏ ویرایش</a>
+                            <a href="{% url 'delete_ship' ship.id %}" class="btn btn-danger btn-sm" onclick="return confirm('آیا مطمئن هستید؟')">🗑 حذف</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-center">❌ شما هنوز هیچ کشتی‌ای ثبت نکرده‌اید.</p>
+    {% endif %}
+
+    <!-- لیست انبارها -->
+    <h3 class="text-center mt-5">🏭 انبارها</h3>
+    <div class="table-responsive">
+        <table class="table table-bordered text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th>📌 نام انبار</th>
+                    <th>📖 توضیحات</th>
+                    <th>⚙ عملیات</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for warehouse in warehouses %}
+                <tr>
+                    <td class="fw-bold">{{ warehouse.name }}</td>
+                    <td>{{ warehouse.description }}</td>
+                    <td>
+                        <a href="{% url 'update_warehouse' warehouse.id %}" class="btn btn-warning btn-sm">✏ ویرایش</a>
+                        <a href="{% url 'delete_warehouse' warehouse.id %}" class="btn btn-danger btn-sm" onclick="return confirm('آیا مطمئن هستید؟')">🗑 حذف</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- دکمه‌های عملیاتی -->
+    <div class="text-center mt-4">
+        <a href="{% url 'create_warehouse' %}" class="btn btn-success btn-lg mx-2">➕ ایجاد انبار جدید</a>
+        <a href="{% url 'add_part_to_warehouse' %}" class="btn btn-info btn-lg mx-2">📦 افزودن قطعه به انبار</a>
+    </div>
+
+    <!-- دکمه خروجی اکسل -->
+    {% if current_ship %}
+    <div class="text-center mt-4">
+        <a href="{% url 'export_searched_ship_to_excel' %}?ship_id={{ current_ship.id }}" class="btn btn-success btn-lg">📂 خروجی اکسل کشتی: {{ current_ship.name }}</a>
+    </div>
+    {% endif %}
+</div>
+
+<!-- استایل‌ها و افکت‌ها -->
+<style>
+    .hover-shadow {
+        transition: all 0.3s ease-in-out;
+    }
+    .hover-shadow:hover {
+        transform: scale(1.03);
+        box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-success, .btn-info, .btn-primary {
+        transition: all 0.3s ease-in-out;
+    }
+
+    .btn-success:hover, .btn-info:hover, .btn-primary:hover {
+        transform: scale(1.05);
+    }
+
+    .card {
+        animation: fadeInUp 1s ease-in-out;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+{% endblock %}

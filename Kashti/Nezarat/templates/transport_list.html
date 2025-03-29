@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-5">
+    <h2 class="text-center mb-4">📋 لیست عملیات‌های حمل‌ونقل</h2>
+
+    {% if operations %}
+        <table class="table table-bordered text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th>کشتی</th>
+                    <th>از</th>
+                    <th>به</th>
+                    <th>مسافت</th>
+                    <th>مدت سفر</th>
+                    <th>وضعیت</th>
+                    <th>تاریخ</th>
+                    <th>جزئیات</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for op in operations %}
+                    <tr>
+                        <td>{{ op.ship.name }}</td>
+                        <td>{{ op.from_warehouse.name }}</td>
+                        <td>{{ op.to_warehouse.name }}</td>
+                        <td>{{ op.distance_km }} km</td>
+                        <td>{{ op.estimated_duration_hr }} ساعت</td>
+                        <td>{{ op.get_status_display }}</td>
+                        <td>{{ op.created_at|date:"Y-m-d H:i" }}</td>
+                        <td>
+                            <a href="{% url 'transport_detail' op.id %}" class="btn btn-sm btn-info">مشاهده</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="alert alert-info text-center">هیچ سفری هنوز ثبت نشده است.</div>
+    {% endif %}
+</div>
+<form method="get" class="mb-4 d-flex gap-3">
+    <input type="text" name="q" value="{{ query }}" class="form-control" placeholder="جستجو بر اساس نام کشتی">
+    <select name="status" class="form-select">
+        <option value="">همه وضعیت‌ها</option>
+        <option value="PENDING" {% if status == "PENDING" %}selected{% endif %}>در حال بررسی</option>
+        <option value="IN_PROGRESS" {% if status == "IN_PROGRESS" %}selected{% endif %}>در حال حرکت</option>
+        <option value="COMPLETED" {% if status == "COMPLETED" %}selected{% endif %}>انجام شده</option>
+    </select>
+    <button class="btn btn-primary">اعمال فیلتر</button>
+</form>
+
+
+{% endblock %}

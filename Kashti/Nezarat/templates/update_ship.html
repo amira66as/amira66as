@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-warning text-white text-center">
+            <h2 class="mb-0"><i class="fas fa-edit"></i> ویرایش کشتی</h2>
+        </div>
+        <div class="card-body bg-light">
+            <form method="post" enctype="multipart/form-data" class="p-4 bg-white rounded shadow-sm">
+                {% csrf_token %}
+                
+                <div class="row">
+                    {% for field in form %}
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold text-dark">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.help_text %}
+                                <small class="form-text text-muted">{{ field.help_text }}</small>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-primary btn-lg px-4">
+                        <i class="fas fa-save"></i> ذخیره تغییرات
+                    </button>
+                    <a href="{% url 'nezarat' %}" class="btn btn-secondary btn-lg px-4 ms-2">
+                        انصراف
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

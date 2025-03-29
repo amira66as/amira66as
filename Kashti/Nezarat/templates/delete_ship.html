@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-5">
+    <div class="alert alert-danger text-center p-5 shadow">
+        <h4>⚠️ آیا مطمئن هستید که می‌خواهید کشتی <strong>{{ ship.name }}</strong> را حذف کنید؟</h4>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">بله، حذف شود</button>
+            <a href="{% url 'company_dashboard' %}" class="btn btn-secondary ms-3">انصراف</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

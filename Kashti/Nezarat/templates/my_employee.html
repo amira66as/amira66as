@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+{% if user.is_authenticated and user.title == 'C' %}
+<div class="container mx-auto py-8">
+    <h2 class="text-center text-3xl font-bold text-blue-700 mb-8">کارمندان من</h2>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for employee in employees %}
+            {% if employee.employee.company_code == company.company_code %}
+            <div class="bg-white rounded-lg shadow-md p-6 text-center hover:shadow-xl transition">
+                <!-- تصویر -->
+                {% if employee.employee.profile_picture %}
+                    <img src="{{ employee.employee.profile_picture.url }}" alt="پروفایل"
+                         class="w-32 h-32 rounded-full object-cover mx-auto mb-4 border-4 border-blue-500">
+                {% else %}
+                    <img src="{% static 'images/default-profile.png' %}" alt="بدون تصویر"
+                         class="w-32 h-32 rounded-full object-cover mx-auto mb-4 border-4 border-gray-400">
+                {% endif %}
+
+                <!-- اطلاعات -->
+                <h3 class="text-xl font-semibold text-gray-800">{{ employee.employee.user.username }}</h3>
+                <p class="text-sm text-gray-600 mt-2">
+                    {% if employee.employee.user.position == 'OA' %}Operator A
+                    {% elif employee.employee.user.position == 'OB' %}Operator B
+                    {% elif employee.employee.user.position == 'OS' %}Operator S
+                    {% elif employee.employee.user.position == 'C' %}Captain
+                    {% else %}بدون مقام{% endif %}
+                </p>
+
+                <!-- دکمه اتوماسیون -->
+                <a href="{% url 'chat' employee.employee.user.id %}">
+                    <button class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full">
+                        اتوماسیون
+                    </button>
+                </a>
+            </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="card shadow-lg border-0 rounded-lg">
+        <div class="card-header bg-primary text-white text-center py-4">
+            <h2 class="mb-0"><i class="fas fa-tools"></i> اضافه کردن قطعه به انبار</h2>
+        </div>
+        <div class="card-body">
+            <!-- نمایش پیام‌ها -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} mt-2 fade-in">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+
+            <!-- فرم اضافه کردن قطعه -->
+            <form method="post" enctype="multipart/form-data" class="bg-light p-4 rounded shadow-sm fade-in">
+                {% csrf_token %}
+                
+                <div class="row">
+                    {% for field in form %}
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold text-primary">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.help_text %}
+                                <small class="text-muted d-block">{{ field.help_text }}</small>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- اضافه کردن موقعیت قطعه برای انبار -->
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold text-primary">موقعیت قطعه در انبار</label>
+                        {{ form.warehouse_sub_storage }}
+                        {% if form.warehouse_sub_storage.help_text %}
+                            <small class="text-muted d-block">{{ form.warehouse_sub_storage.help_text }}</small>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-success btn-lg px-4 shadow-sm">
+                        <i class="fas fa-plus-circle"></i> اضافه کردن قطعه
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- استایل‌ها و انیمیشن‌ها -->
+<style>
+    .fade-in {
+        animation: fadeIn 1s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .card-header h2 {
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-success {
+        background-image: linear-gradient(to right, #28a745, #218838);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-success:hover {
+        background-image: linear-gradient(to right, #218838, #1e7e34);
+        transform: scale(1.05);
+    }
+</style>
+{% endblock %}

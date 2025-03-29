@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="mb-4">لیست قطعات</h2>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>نام قطعه</th>
+                <th>تعداد</th>
+                <th>تاریخ انقضا</th>
+                <th>وضعیت</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for part in parts %}
+                <tr>
+                    <td>{{ part.name }}</td>
+                    <td>{{ part.quantity }}</td>
+                    <td>{{ part.expiry_date }}</td>
+                    <td>{{ part.get_status_display }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

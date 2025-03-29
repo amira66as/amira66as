@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="container mt-5">
+  <h2 class="text-center mb-4">ایجاد سفر حمل‌ونقل چندمرحله‌ای</h2>
+
+  <form method="post">
+    {% csrf_token %}
+    
+    <!-- کارت اطلاعات کلی سفر -->
+    <div class="card mb-4 shadow">
+      <div class="card-header bg-primary text-white">
+        <h4 class="mb-0">
+          <i class="fas fa-ship"></i> اطلاعات سفر
+        </h4>
+      </div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label fw-bold">کشتی:</label>
+            {{ transport_operation_form.ship }}
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-bold">انبار مبدا:</label>
+            {{ transport_operation_form.from_warehouse }}
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-bold">انبار مقصد:</label>
+            {{ transport_operation_form.to_warehouse }}
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-bold">مسافت (کیلومتر):</label>
+            {{ transport_operation_form.distance_km }}
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-bold">سرعت کشتی (km/h):</label>
+            {{ transport_operation_form.ship_speed_kph }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- کارت مرحله ۱: زیرانبار انبار مبدا → زیرانبار کشتی -->
+    <div class="card mb-4 shadow">
+      <div class="card-header bg-info text-white">
+        <h4 class="mb-0">
+          <i class="fas fa-warehouse"></i> مرحله ۱: انتقال از زیرانبار انبار مبدا به زیرانبار کشتی
+        </h4>
+      </div>
+      <div class="card-body">
+        <p class="small text-muted">
+          قطعاتی که قرار است از انبار مبدا برداریم و در کشتی قرار دهیم.
+        </p>
+        <div class="table-responsive">
+          <table class="table table-striped align-middle">
+            <thead class="table-dark">
+              <tr>
+                <th>نام قطعه</th>
+                <th>زیرانبار انبار مبدا</th>
+                <th>زیرانبار کشتی</th>
+                <th>تعداد</th>
+                <th>مصرفی؟</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for form in transfer_to_ship_forms %}
+              <tr>
+                <td>{{ form.part }}</td>
+                <td>{{ form.from_warehouse }}</td>
+                <td>{{ form.ship_subwarehouse }}</td>
+                <td>{{ form.quantity }}</td>
+                <td>{{ form.is_consumable }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- کارت مرحله ۲: زیرانبار کشتی → زیرانبار انبار مقصد -->
+    <div class="card mb-4 shadow">
+      <div class="card-header bg-warning text-dark">
+        <h4 class="mb-0">
+          <i class="fas fa-exchange-alt"></i> مرحله ۲: بازگشت از کشتی به انبار مقصد
+        </h4>
+      </div>
+      <div class="card-body">
+        <p class="small text-muted">
+          قطعاتی که در کشتی مانده یا مصرف نشده یا بخشی مصرف شده‌اند؛ چه تعدادی به انبار مقصد برمی‌گردد؟
+        </p>
+        <div class="table-responsive">
+          <table class="table table-striped align-middle">
+            <thead class="table-dark">
+              <tr>
+                <th>نام قطعه</th>
+                <th>زیرانبار کشتی</th>
+                <th>زیرانبار انبار مقصد</th>
+                <th>تعداد برگشتی</th>
+                <th>درصد استفاده (در صورت مصرفی)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for form in transfer_to_warehouse_forms %}
+              <tr>
+                <td>{{ form.part }}</td>
+                <td>{{ form.ship_subwarehouse }}</td>
+                <td>{{ form.to_subwarehouse }}</td>
+                <td>{{ form.quantity }}</td>
+                <td>{{ form.usage_percent }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- دکمه ثبت -->
+    <div class="text-center">
+      <button type="submit" class="btn btn-success btn-lg">
+        <i class="fas fa-check-circle"></i> ثبت سفر
+      </button>
+    </div>
+  </form>
+</div>
+
+{% endblock %}

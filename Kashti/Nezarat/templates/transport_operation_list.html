@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="mb-4">لیست عملیات حمل و نقل</h2>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>کشتی</th>
+                <th>انبار مبدا</th>
+                <th>انبار مقصد</th>
+                <th>وضعیت</th>
+                <th>تاریخ شروع</th>
+                <th>تاریخ اتمام</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for operation in operations %}
+                <tr>
+                    <td>{{ operation.ship.name }}</td>
+                    <td>{{ operation.from_warehouse.name }}</td>
+                    <td>{{ operation.to_warehouse.name }}</td>
+                    <td>{{ operation.get_status_display }}</td>
+                    <td>{{ operation.started_at }}</td>
+                    <td>{{ operation.completed_at }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mx-auto max-w-3xl p-6">
+    <h2 class="text-center text-2xl font-bold text-blue-700 mb-6">💬 چت با {{ receiver.username }}</h2>
+
+    <!-- بخش پیام‌ها -->
+    <div class="bg-white shadow-md rounded-lg p-4 mb-6 max-h-[400px] overflow-y-auto border">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="mb-3">
+                    <span class="font-semibold text-blue-600">{{ message.sender.username }}</span>:
+                    <span class="text-gray-800">{{ message.content }}</span>
+                    <span class="text-xs text-gray-500">({{ message.timestamp|date:"Y-m-d H:i" }})</span>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-gray-500 text-center">پیامی وجود ندارد.</p>
+        {% endif %}
+    </div>
+
+    <!-- فرم ارسال پیام -->
+    <form method="post" class="flex flex-col gap-4">
+        {% csrf_token %}
+        <textarea name="content" rows="3" class="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="متن پیام..." required></textarea>
+        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded self-start">
+            ارسال
+        </button>
+    </form>
+
+    <!-- دکمه برگشت -->
+    <div class="mt-6">
+        {% if user.title == 'E' %}
+            <a href="{% url 'my_colleagues' %}" class="text-blue-600 hover:underline">← بازگشت به لیست همکاران</a>
+        {% elif user.title == 'C' %}
+            <a href="{% url 'my_employee' %}" class="text-blue-600 hover:underline">← بازگشت به لیست کارمندان</a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Tailwind اگر لازم داری -->
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+{% endblock %}

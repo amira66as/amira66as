@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="card shadow-lg border-0 rounded-lg">
+        <div class="card-header bg-gradient-primary text-white text-center py-4">
+            <h2 class="mb-0">🛳️ مدیریت سفر</h2>
+        </div>
+        <div class="card-body">
+            <!-- نمایش لیست قطعات -->
+            <h3 class="mb-4"><i class="fas fa-box"></i> لیست قطعات در انبار کشتی</h3>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped table-hover">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">نام قطعه</th>
+                            <th scope="col">توضیحات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for part in parts %}
+                        <tr>
+                            <td>{{ part.name }}</td>
+                            <td>{{ part.description }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="2" class="text-center">هیچ قطعه‌ای در انبار کشتی وجود ندارد.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- افزودن مقصد جدید -->
+            <h3 class="mt-5"><i class="fas fa-map-marker-alt"></i> افزودن مقصد جدید</h3>
+            <form method="post" class="border p-4 bg-light rounded shadow-sm">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary btn-lg mt-3">
+                    <i class="fas fa-plus"></i> افزودن مقصد
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- انیمیشن‌های CSS -->
+<style>
+    .card-header {
+        animation: fadeInDown 1s ease-in-out;
+    }
+
+    .card-body {
+        animation: fadeInUp 1s ease-in-out;
+    }
+
+    .table thead {
+        animation: fadeIn 1s ease-in-out;
+    }
+
+    .table tbody tr {
+        animation: fadeInUp 1s ease-in-out;
+    }
+
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    .card-header h2,
+    .card-body h3 {
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-primary {
+        background-image: linear-gradient(to right, #007bff, #0056b3);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-primary:hover {
+        background-image: linear-gradient(to right, #0056b3, #003f7f);
+    }
+
+    .btn-secondary {
+        background-image: linear-gradient(to right, #6c757d, #495057);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-secondary:hover {
+        background-image: linear-gradient(to right, #495057, #343a40);
+    }
+</style>
+{% endblock %}

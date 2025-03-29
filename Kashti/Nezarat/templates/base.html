@@ -1,0 +1,405 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Kashti | کشتی</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{% static 'images/favicon.png' %}">
+    
+    <!-- فونت‌ها -->
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- آیکون‌های Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- بوت‌استرپ ۵ (RTL) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    
+    <!-- استایل‌های سفارشی -->
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet">
+
+    <style>
+        /* تنظیمات کلی */
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        /* نوار ناوبری */
+        .navbar {
+            background: linear-gradient(135deg, #0052cc, #00aaff);
+        }
+        .navbar-brand {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            color: #fff !important;
+            transition: all 0.3s;
+        }
+        .navbar-brand:hover {
+            transform: scale(1.1);
+        }
+        .nav-link {
+            color: #ffffff !important;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        .nav-link:hover {
+            color: #ffeb3b !important;
+            transform: translateY(-2px);
+        }
+        .nav-item.active .nav-link {
+            font-weight: bold;
+            border-bottom: 2px solid #ffeb3b;
+        }
+
+        /* دکمه‌های سفارشی */
+        .btn-custom {
+            background-color: #00aaff;
+            color: #ffffff;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        .btn-custom:hover {
+            background-color: #008ecc;
+            transform: scale(1.05);
+        }
+
+        /* فوتر */
+        .footer {
+            background-color: #0052cc;
+            color: #ffffff;
+            padding: 1rem 0;
+            text-align: center;
+        }
+        .footer a {
+            color: #ffeb3b;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .footer a:hover {
+            text-decoration: underline;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+
+
+<body class="d-flex flex-column min-vh-100">
+
+    {% if notifications %}
+    <div id="reminder-alert" class="alert alert-warning text-center m-0 rounded-0 shadow slide-down">
+        🔔 شما {{ notifications|length }} یادآوری فعال دارید —
+        <a href="{% url 'reminder_list' %}" class="fw-bold text-decoration-underline text-dark">
+            مشاهده یادآوری‌ها
+        </a>
+    </div>
+    {% endif %}
+
+<style>
+    @keyframes slideDown {
+        from {
+            transform: translateY(-100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    .slide-down {
+        animation: slideDown 0.6s ease-out;
+    }
+
+    /* حالت اختیاری: بعد از چند ثانیه ناپدید شود */
+    #reminder-alert {
+        transition: opacity 0.5s ease-in-out;
+    }
+
+    #reminder-alert.fade-out {
+        opacity: 0;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    // اگر می‌خوای بعد از چند ثانیه بسته بشه
+    setTimeout(() => {
+        const alert = document.getElementById('reminder-alert');
+        if (alert) {
+            alert.classList.add('fade-out');
+        }
+    }, 7000); // بعد از 7 ثانیه مخفی شود
+</script>
+
+    
+<header>
+    <!-- 
+         پیش‌نیازها:
+           1) در بخش <head> لینک‌های CSS/JS بوت‌استرپ را لود کرده باشید:
+              <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+              <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  
+           2) font-awesome نسخه 6 هم لود شده باشد:
+              <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    -->
+    <nav class="navbar navbar-expand-lg shadow" style="background: linear-gradient(135deg, #0052cc, #00aaff)">
+      <div class="container">
+  
+        <!-- نام / لوگو سایت -->
+        <a class="navbar-brand fw-bold text-white" href="{% url 'home' %}" style="font-family: 'Poppins', sans-serif;">
+          <i class="fa-solid fa-ship"></i> Kashti | کشتی
+        </a>
+  
+        <!-- دکمه (Toggle) برای حالت موبایل -->
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
+                data-bs-target="#mainNavbar" aria-controls="mainNavbar"
+                aria-expanded="false" aria-label="Toggle navigation" style="color:#fff">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+  
+        <!-- آیتم‌های منو -->
+        <div class="collapse navbar-collapse" id="mainNavbar">
+          <ul class="navbar-nav ms-auto">
+  
+            <!-- لینک ساده به صفحه اصلی -->
+            <li class="nav-item {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+              <a class="nav-link text-white" href="{% url 'home' %}">
+                <i class="fa-solid fa-house-chimney"></i> صفحه اصلی
+              </a>
+            </li>
+  
+            {% if user.is_authenticated and user.title == 'C' %}
+              <!-- منوی کشویی برای مدیریت کارکنان -->
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle text-white" href="#" id="employeeDropdown" 
+                   role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="fa-solid fa-users"></i> کارکنان
+                </a>
+                <ul class="dropdown-menu border-0 shadow" aria-labelledby="employeeDropdown">
+                  <li><a class="dropdown-item" href="{% url 'company_dashboard' %}">داشبورد شرکت</a></li>
+                  <li><a class="dropdown-item" href="{% url 'my_employee' %}">کارمندان من</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item" href="{% url 'nezarat' %}">نظارت</a></li>
+                </ul>
+              </li>
+  
+              <!-- منوی کشویی سفرها -->
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle text-white" href="#" id="transportDropdown" 
+                   role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="fa-solid fa-ship"></i> سفرها
+                </a>
+                <ul class="dropdown-menu border-0 shadow" aria-labelledby="transportDropdown">
+                  <li><a class="dropdown-item" href="{% url 'create_transport_operation' %}">➕ سفر جدید</a></li>
+                  <li><a class="dropdown-item" href="{% url 'transport_list' %}">📋 لیست سفرها</a></li>
+                  <li><a class="dropdown-item" href="{% url 'transport_operation_list' %}">تمام عملیات</a></li>
+                </ul>
+              </li>
+  
+              <!-- منوی کشویی انبارها -->
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle text-white" href="#" id="warehouseDropdown" 
+                   role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="fa-solid fa-warehouse"></i> انبارها
+                </a>
+                <ul class="dropdown-menu border-0 shadow" aria-labelledby="warehouseDropdown">
+                  <li><a class="dropdown-item" href="{% url 'warehouse_list' %}">🏭 لیست انبارها</a></li>
+                  <li><a class="dropdown-item" href="{% url 'create_warehouse' %}">ایجاد انبار</a></li>
+                  <li><a class="dropdown-item" href="{% url 'create_warehouse_with_substorages' %}">انبار + زیرانبار</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item" href="{% url 'add_part_to_warehouse' %}">➕ افزودن قطعه</a></li>
+                  <li><a class="dropdown-item" href="{% url 'create_warehouse_substorage' %}">➕ ایجاد زیرانبار تکی</a></li>
+                </ul>
+              </li>
+  
+              <!-- منوی کشویی قطعات -->
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle text-white" href="#" id="partsDropdown"
+                   role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="fa-solid fa-cogs"></i> قطعات
+                </a>
+                <ul class="dropdown-menu border-0 shadow" aria-labelledby="partsDropdown">
+                  <li><a class="dropdown-item" href="{% url 'part_list' %}">لیست قطعات</a></li>
+                  <li><a class="dropdown-item" href="{% url 'create_part' %}">➕ ایجاد قطعه</a></li>
+                </ul>
+              </li>
+  
+              <!-- منوی کشویی کشتی -->
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle text-white" href="#" id="shipDropdown"
+                   role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="fa-solid fa-anchor"></i> کشتی
+                </a>
+                <ul class="dropdown-menu border-0 shadow" aria-labelledby="shipDropdown">
+                  <li><a class="dropdown-item" href="{% url 'create_ship' %}">➕ ایجاد کشتی</a></li>
+                  <li><a class="dropdown-item" href="{% url 'create_ship_subwarehouse' %}">زیرانبار کشتی</a></li>
+                  <li><a class="dropdown-item" href="{% url 'add_ship_attribute' %}">➕ ویژگی کشتی</a></li>
+                </ul>
+              </li>
+  
+              <!-- یادآوری‌ها -->
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle text-white" href="#" id="reminderDropdown"
+                   role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="fa-solid fa-clock"></i> یادآوری‌ها
+                </a>
+                <ul class="dropdown-menu border-0 shadow" aria-labelledby="reminderDropdown">
+                  <li><a class="dropdown-item" href="{% url 'reminder_list' %}">لیست یادآوری</a></li>
+                  <li><a class="dropdown-item" href="{% url 'create_reminder' %}">➕ یادآوری جدید</a></li>
+                </ul>
+              </li>
+  
+              <!-- خرابی / آسیب -->
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle text-white" href="#" id="damageDropdown"
+                   role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="fa-solid fa-tools"></i> خرابی
+                </a>
+                <ul class="dropdown-menu border-0 shadow" aria-labelledby="damageDropdown">
+                  <li><a class="dropdown-item" href="{% url 'report_damage' %}">گزارش خرابی</a></li>
+                  <li><a class="dropdown-item" href="{% url 'review_damage_reports' %}">بررسی گزارش‌ها</a></li>
+                  <li><a href="{% url 'review_damage_reports' %}">لینک گزارش خرابی</a></li>
+                </ul>
+              </li>
+  
+              <!-- سایر -->
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle text-white" href="#" id="othersDropdown"
+                   role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="fa-solid fa-ellipsis-h"></i> سایر
+                </a>
+                <ul class="dropdown-menu border-0 shadow" aria-labelledby="othersDropdown">
+                  <li><a class="dropdown-item" href="{% url 'part_status_report' %}">وضعیت قطعات</a></li>
+                  <li><a class="dropdown-item" href="{% url 'role_based_dashboard' %}">داشبورد براساس نقش</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item" href="{% url 'create_transport_operation' %}">سفر جدید (تکراری)</a></li>
+                </ul>
+              </li>
+            {% endif %}
+  
+            <!-- چت (همراه با نشانگر تعداد پیام نخوانده) -->
+            <li class="nav-item position-relative">
+              <a class="nav-link text-white" href="{% url 'chat_list' %}">
+                <i class="fa-solid fa-envelope"></i>
+                {% if unread_count > 0 %}
+                  <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    {{ unread_count }}
+                  </span>
+                {% endif %}
+                <span class="ms-1">چت</span>
+              </a>
+            </li>
+  
+            <!-- ورود / خروج -->
+            {% if user.is_authenticated %}
+              <li class="nav-item">
+                <a class="nav-link text-white" href="{% url 'logout' %}">
+                  <i class="fa-solid fa-sign-out-alt"></i> خروج
+                </a>
+              </li>
+            {% else %}
+              <li class="nav-item">
+                <a class="nav-link text-white" href="{% url 'login' %}">
+                  <i class="fa-solid fa-sign-in-alt"></i> ورود
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-white" href="{% url 'sign_up' %}">
+                  <i class="fa-solid fa-user-plus"></i> ثبت‌نام
+                </a>
+              </li>
+            {% endif %}
+  
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
+  
+  
+
+
+<!-- Modal -->
+<div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content shadow">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title" id="infoModalLabel"><i class="fas fa-info-circle"></i> درباره‌ی سامانه Kashti</h5>
+          <button type="button" class="btn-close bg-white" data-bs-dismiss="modal" aria-label="بستن"></button>
+        </div>
+        <div class="modal-body text-start text-secondary">
+          <ul class="list-unstyled">
+            <li><strong>📦 سفر جدید:</strong> تعریف یک مسیر حمل‌ونقل برای کشتی از یک انبار به انبار دیگر</li>
+            <li><strong>➕ افزودن قطعه:</strong> انتخاب قطعات و افزودن آن‌ها به سفر، با مشخص‌کردن مبدا و مقصد</li>
+            <li><strong>⏳ زمان سفر:</strong> سیستم براساس مسافت و سرعت کشتی، زمان تقریبی را محاسبه می‌کند</li>
+            <li><strong>⚠️ هشدار انقضا:</strong> اگر قطعه در مسیر منقضی شود، هشدار داده می‌شود</li>
+            <li><strong>👨‍✈️ تایید سفر:</strong> فقط کاپیتان می‌تواند سفر را تایید و آغاز کند</li>
+            <li><strong>📊 داشبورد:</strong> نمای کلی از کشتی‌ها، قطعات، سفرها و یادآوری‌ها</li>
+            <li><strong>🧾 خروجی PDF/Excel:</strong> برای گزارش‌گیری دقیق از سفر و قطعات</li>
+            <li><strong>⏰ یادآوری‌ها:</strong> برنامه‌ریزی برای تعمیر، نگهداری یا بررسی قطعه‌ها</li>
+          </ul>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">بستن</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+{% if notifications %}
+    <div class="alert alert-warning text-center">
+        🔔 شما {{ notifications|length }} یادآوری فعال دارید!
+        <a href="{% url 'reminder_list' %}">مشاهده</a>
+    </div>
+{% endif %}
+
+    
+    <!-- محتوای اصلی -->
+    <main class="flex-fill">
+        <div class="container mt-4">
+            {% block content %}
+            <!-- محتوای صفحات داخلی -->
+            {% endblock %}
+        </div>
+    </main>
+
+    <!-- فوتر -->
+    <footer class="footer mt-auto">
+        <div class="container">
+            <p class="small">&copy; تمام حقوق محفوظ است | Kashti ۲۰۲۵</p>
+        </div>
+    </footer>
+
+    <!-- اسکریپت‌های بوت‌استرپ -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    
+
+    <!-- آیکون‌های Font Awesome -->
+    <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
+
+    <!-- اسکریپت‌های سفارشی -->
+        <!-- Toast Container -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
+    {% for message in messages %}
+    <div class="toast align-items-center text-bg-{% if message.tags %}{{ message.tags }}{% else %}info{% endif %} border-0 mb-2 show" role="alert">
+        <div class="d-flex">
+            <div class="toast-body">
+                {{ message }}
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+    {% block scripts %}
+    {% endblock %}
+</body>
+</html>

@@ -1,0 +1,205 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="card shadow-lg border-0 rounded-lg">
+        <div class="card-header bg-gradient-primary text-white text-center py-4">
+            <h2 class="mb-0">📊 وضعیت سفرها و انبارها</h2>
+        </div>
+        <div class="card-body">
+            <!-- بخش سفرها -->
+            {% if page_obj %}
+            <h3 class="mb-4"><i class="fas fa-ship"></i> سفرها:</h3>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped table-hover">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">کشتی</th>
+                            <th scope="col">قطعه</th>
+                            <th scope="col">از انبار</th>
+                            <th scope="col">به انبار</th>
+                            <th scope="col">وضعیت</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for shipment in page_obj %}
+                        <tr>
+                            <td>{{ shipment.ship.name }}</td>
+                            <td>{{ shipment.part.name }}</td>
+                            <td>{{ shipment.from_warehouse.name }}</td>
+                            <td>{{ shipment.to_warehouse.name }}</td>
+                            <td>{{ shipment.status }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- صفحه‌بندی -->
+            <nav aria-label="صفحه‌بندی">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1" aria-label="اولین">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="قبلی">
+                            <span aria-hidden="true">&lt;</span>
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    <li class="page-item disabled">
+                        <span class="page-link">
+                            صفحه {{ page_obj.number }} از {{ page_obj.paginator.num_pages }}.
+                        </span>
+                    </li>
+
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="بعدی">
+                            <span aria-hidden="true">&gt;</span>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="آخرین">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% else %}
+            <p class="text-muted text-center">هیچ سفری ثبت نشده است.</p>
+            {% endif %}
+
+            <!-- بخش انبارها -->
+            {% if warehouses %}
+            <h3 class="mt-5"><i class="fas fa-warehouse"></i> انبارها:</h3>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped table-hover">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">نام انبار</th>
+                            <th scope="col">توضیحات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for warehouse in warehouses %}
+                        <tr>
+                            <td>{{ warehouse.name }}</td>
+                            <td>{{ warehouse.description }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-muted text-center">هیچ انباری ثبت نشده است.</p>
+            {% endif %}
+
+            <!-- بخش قطعات -->
+            {% if parts %}
+            <h3 class="mt-5"><i class="fas fa-box"></i> قطعات:</h3>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped table-hover">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">نام قطعه</th>
+                            <th scope="col">تعداد</th>
+                            <th scope="col">عملیات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for part in parts %}
+                        <tr>
+                            <td>{{ part.name }}</td>
+                            <td>{{ part.quantity }}</td>
+                            <td>
+                                <a href="{% url 'update_part_quantity' part.id %}" class="btn btn-warning btn-sm">
+                                    <i class="fas fa-edit"></i> ویرایش تعداد
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-muted text-center">هیچ قطعه‌ای ثبت نشده است.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- انیمیشن‌های CSS -->
+<style>
+    .card-header {
+        animation: fadeInDown 1s ease-in-out;
+    }
+
+    .card-body {
+        animation: fadeInUp 1s ease-in-out;
+    }
+
+    .table thead {
+        animation: fadeIn 1s ease-in-out;
+    }
+
+    .table tbody tr {
+        animation: fadeInUp 1s ease-in-out;
+    }
+
+    .pagination {
+        animation: fadeIn 1s ease-in-out;
+    }
+
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    .card-header h2 {
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-primary,
+    .btn-warning {
+        background-image: linear-gradient(to right, #007bff, #0056b3);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-primary:hover,
+    .btn-warning:hover {
+        background-image: linear-gradient(to right, #0056b3, #003f7f);
+    }
+</style>
+{% endblock %}

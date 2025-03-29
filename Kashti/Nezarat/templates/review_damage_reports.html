@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-5">
+    <h4 class="mb-4 text-center">📋 درخواست‌های خرابی قطعه (در انتظار)</h4>
+
+    {% for report in reports %}
+    <div class="card mb-3 shadow">
+        <div class="card-body">
+            <h5 class="card-title">🛠 {{ report.part.name }}</h5>
+            <p class="mb-1">👤 گزارش‌دهنده: {{ report.reported_by.username }}</p>
+            <p class="mb-2">📄 توضیح: {{ report.reason }}</p>
+            <div class="d-flex gap-2">
+                <a href="{% url 'handle_damage_report' report.id 'confirm' %}" class="btn btn-success">تایید</a>
+                <a href="{% url 'handle_damage_report' report.id 'reject' %}" class="btn btn-danger">رد</a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p class="text-center text-muted">هیچ گزارشی وجود ندارد.</p>
+    {% endfor %}
+</div>
+{% endblock %}

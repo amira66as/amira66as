@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="mb-4">اضافه کردن قطعات به سفر</h2>
+    <form method="post" class="border p-4 bg-white rounded shadow-sm">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">اضافه کردن قطعه</button>
+    </form>
+
+    <h3 class="mt-5">قطعات اضافه شده</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>نام قطعه</th>
+                <th>تعداد</th>
+                <th>عملیات</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for part in parts %}
+            <tr>
+                <td>{{ part.part.name }}</td>
+                <td>{{ part.quantity }}</td>
+                <td>{{ part.get_action_display }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
